@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.multi.mapper.MemberMapper">
+	<insert id="insert" parameterType="Member">
+		insert into member values(#{userid}, #{name}, #{userpwd}, #{hp1}, #{hp2}, #{hp3}, 
+		#{post:VARCHAR}, #{addr1:VARCHAR}, #{addr2:VARCHAR}, SYSDATE, 1000, 0)
+	</insert>
+	<select id="idCheck" parameterType="string" resultType="_int">
+		select count(userid) from member where userid=#{userid}
+	</select>
+<!--
+	탈퇴회원을 제외한 memberView를 만들자
+	*****************************************
+	CREATE OR REPLACE VIEW memberView
+	as
+	select member.*, 
+	decode(mstate,0,'활동회원',-1,'정지회원',-2,'탈퇴회원',9,'관리자') mstateStr
+	from member
+	where mstate >-2;
+	******************************************** 
+-->
+	<select id="selectByUserid" parameterType="string" resultType="Member">
+		select * from memberView where userid=#{userid}
+	</select>
+</mapper>

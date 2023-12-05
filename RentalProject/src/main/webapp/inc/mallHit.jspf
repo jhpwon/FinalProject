@@ -1,0 +1,35 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<h1>HIT 상품</h1>
+<div class="row">
+	<c:if test="${hitItems eq null or empty hitItems}">
+		<div class="col-3">
+			<h4>상품 준비 중</h4>
+		</div>
+	</c:if>
+	<c:if test="${hitItems ne null and not empty hitItems}">
+		<c:forEach var="item" items="${hitItems}" begin="0" end="3">
+			<div class="col-3 text-center">
+				<a href="prodDetail?pnum=${item.pnum}">
+				<c:choose>
+					<c:when test="${item.pimage1 ne null}">
+						<img src="resources/product_images/${item.pimage1}" class="img-fluid">
+					</c:when>
+					<c:otherwise>
+						<img src="resources/product_images/noimage.png" class="img-fluid">
+					</c:otherwise>
+				</c:choose>
+				</a>
+				<br><br>
+				<h4>${item.pname}</h4>
+				<del><fmt:formatNumber value="${item.price}" pattern="###,###" /></del>원
+				<br>
+				<span class="text-danger"><fmt:formatNumber value="${item.saleprice}" pattern="###,###" /></span>원
+				<br>
+				<span class="badge badge-danger">${item.percent} % 할인</span>
+				<br>
+				<span class="badge badge-success">${item.point} Point</span>
+			</div>
+		</c:forEach>
+	</c:if>
+</div>
