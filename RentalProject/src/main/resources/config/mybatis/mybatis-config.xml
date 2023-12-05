@@ -3,7 +3,7 @@
 PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-	<!-- 타입 별칭 설정============================ -->
+	<!-- 타입 별칭 설정============================  -->
 	<typeAliases>
 		<typeAlias type="com.memo.model.MemoVO" alias="Memo"/>
 		<typeAlias type="com.multi.model.CategoryVO" alias="Category"/>
@@ -17,7 +17,8 @@ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
 	
 	<!-- 매퍼 정의================================ -->
 	<mappers>
-		<!-- <mapper resource="config/mapper/SampleMapper.xml" /> -->
+		<!-- <mapper resource="config/mapper/SampleMapper.xml"/> -->
+		
 		<mapper resource="config/mapper/MemoMapper.xml"/>
 		<mapper resource="config/mapper/ProductMapper.xml"/>
 		<mapper resource="config/mapper/CartMapper.xml"/>

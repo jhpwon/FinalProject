@@ -31,21 +31,30 @@ public class DataSourceTests {
 	
 	@Test
 	public void testMyBatis() {
-		try (SqlSession ses=factory.openSession()) {
+		try(SqlSession ses=factory.openSession()){
+			
 			log.info("ses: "+ses);
+			
 			Connection con=ses.getConnection();
+			
 			log.info("con: "+con);
-		} catch (Exception e) {
+			
+		}catch(Exception e) {
 			fail(e.getMessage());
-		} 
+		}
 	}
+	
 	
 	@Test
 	public void testConnection() {
-		try (Connection con=dataSource.getConnection()) {
+		try(Connection con=dataSource.getConnection()){
 			log.info("con: "+con);
-		} catch (Exception e) {
+		}catch(Exception e) {
 			log.error(e);
 		}
-	}
+	}//---------------------
+	
+	
+	
+
 }

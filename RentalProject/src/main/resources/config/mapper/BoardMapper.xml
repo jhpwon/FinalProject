@@ -4,78 +4,112 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.multi.mapper.BoardMapper">
+	
 	<insert id="insertBoard" parameterType="Board">
 		<selectKey keyProperty="num" order="BEFORE" resultType="_int">
 			select spring_board_seq.nextval from dual
 		</selectKey>
-		insert into spring_board(num, userid, subject, content, passwd, filename, filesize, originFilename, refer, lev, sunbun) 
-		values(#{num}, #{userid}, #{subject:VARCHAR}, #{content:VARCHAR}, #{passwd}, 
-		#{filename:VARCHAR}, #{filesize:NUMERIC}, #{originFilename:VARCHAR}, #{num}, 0, 0)
+		insert into spring_board(num,userid,subject,content,passwd
+		,filename,filesize, originFilename, refer, lev, sunbun)
+		values(#{num},#{userid},#{subject:VARCHAR},#{content:VARCHAR},#{passwd}
+		,#{filename:VARCHAR}, #{filesize:NUMERIC},#{originFilename:VARCHAR}
+		,#{num},0,0)
+		<!-- 원글쓰기 refer(글그룹번호)값이 글번호(num)와 동일하게 insert
+				    lev(0)
+				    sunbun(0)
+		 -->
 	</insert>
+	
 	<sql id="findWhere">
-		<if test="findType != null and findKeyword !=''">
+		<if test="findType !=null and findKeyword!=''">
 			<where>
-				<if test="findType==1">
+				<if test="findType==1"> <!-- 글제목 -->
 					subject like '%'||#{findKeyword}||'%'
 				</if>
-				<if test="findType==2">
+				<if test="findType==2"> <!-- 작성자 -->
 					userid like '%'||#{findKeyword}||'%'
 				</if>
-				<if test="findType==3">
+				<if test="findType==3"> <!-- 글내용 -->
 					content like '%'||#{findKeyword}||'%'
 				</if>
-			</where>
+			</where>		
 		</if>
 	</sql>
+	
 	<select id="getTotalCount" resultType="_int" parameterType="Paging">
 		select count(num) from spring_board
-		<include refid="findWhere" />
-		
+		<include refid="findWhere"/>
 	</select>
+	
 	<select id="getBoardAllPaging" parameterType="Paging" resultType="Board">
-		select * from 
-		( select row_number() over(order by refer desc, sunbun asc) rn, spring_board.* from spring_board
-		 <include refid="findWhere" />
-		) 
-		<![CDATA[
-		where rn > #{start} and rn < #{end}
-		]]>
+		select * from(
+		select row_number() over( order by refer desc, sunbun asc) rn, spring_board.*
+		from spring_board
+		<include refid="findWhere"/>
+		 ) 
+		<![CDATA[ 
+		where rn >#{start} and rn < #{end}	
+		]]> 
 	</select>
+	
 	<select id="getBoardAll_old" parameterType="map" resultType="Board">
 		<!-- select * from spring_board order by num desc -->
-		select * from spring_board order by refer desc, sunbun asc
+			select * from spring_board order by refer desc, sunbun asc
+		
 	</select>
+	
 	<select id="getBoardAll" parameterType="map" resultType="Board">
-	select * from 
-	( select row_number() over(order by refer desc, sunbun asc) rn, spring_board.* from spring_board ) 
-	<![CDATA[
-	where rn > #{start} and rn < #{end}
-	]]>
-	<!-- 부등호 등의 문자가 나올때는 CDATA Section으로 감싸자. CDATA는 Character Data라는
+		select * from(
+		select row_number() over( order by refer desc, sunbun asc) rn, spring_board.*
+		from spring_board ) 
+		<![CDATA[ 
+		where rn >#{start} and rn < #{end}	
+		]]> 
+		
+		<!-- 부등호 등의 문자가 나올때는 CDATA Section으로 감싸자. CDATA는 Character Data라는
 		 의미. CDATA로 감싸진 부분은 xml문서로 파싱하지 않고 문자로 취급한다 -->
 		 <!-- where rn &gt; #{start} and rn &lt; #{end} -->
 		 <!-- where rn between #{start} and #{end} -->
 	</select>
+	
 	<select id="selectBoardByNum" parameterType="_int" resultType="Board">
 		select * from spring_board where num=#{value}
 	</select>
+	
 	<update id="updateReadnum" parameterType="_int">
-		update spring_board set readnum=readnum+1 where num=#{value}
+		update spring_board set readnum=readnum+1 where num=#{value}	
 	</update>
+	<!-- 답변달기 1단계 : 부모글의 refer,lev,sunbun가져오기-->
 	<select id="selectRefLevSunbun" parameterType="_int" resultType="Board">
-		select refer, lev, sunbun from spring_board where num=#{value}
+		select refer,lev,sunbun from spring_board where num=#{value}
 	</select>
+	
+	<!-- [답변글쓰기 관련] 2단계:  기존에 달려있는 답변글이 있다면 답변글들의 순번(sunbun)을 하나씩 증가시켜준다(뒤로 밀어내기)
+		왜? 내가 방금 쓴 답변글이 위에 올라오게 하기 위해 ==> update문	-->
 	<update id="updateSunbun" parameterType="Board">
 		update spring_board set sunbun=sunbun+1 where refer=#{refer} and sunbun > #{sunbun}
 	</update>
+	
+	
+	<!--답변달기 3단계 : 답변글 insert 하기 -->
 	<insert id="rewriteBoard" parameterType="Board">
 		<selectKey keyProperty="num" order="BEFORE" resultType="_int">
 			select spring_board_seq.nextval from dual
 		</selectKey>
-		insert into spring_board(num, userid, subject, content, passwd, filename, filesize, originFilename, refer, lev, sunbun) 
-		values(#{num}, #{userid}, #{subject:VARCHAR}, #{content:VARCHAR}, #{passwd}, 
-		#{filename:VARCHAR}, #{filesize:NUMERIC}, #{originFilename:VARCHAR}, #{refer}, #{lev}, #{sunbun})
+		insert into spring_board(num,userid,subject,content,passwd
+		,filename,filesize, originFilename, refer, lev, sunbun)
+		values(#{num},#{userid},#{subject:VARCHAR},#{content:VARCHAR},#{passwd}
+		,#{filename:VARCHAR}, #{filesize:NUMERIC},#{originFilename:VARCHAR}
+		,#{refer},#{lev},#{sunbun})
+		<!-- 원글쓰기 refer(글그룹번호)값이 글번호(num)와 동일하게 insert
+				    lev(0)
+				    sunbun(0)
+			답변글쓰기 refer값은 부모글의 refer와 동일하게 insert	    
+					lev : 부모lev+1
+					sunbun: 부모sunbun+1
+		 -->		
 	</insert>
+	
 	<!-- 글 삭제 -->
 	<delete id="deleteBoard" parameterType="_int">
 		delete from spring_board where num=#{value}
@@ -88,9 +122,14 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="filename != null and filename!=''">
 		, filename=#{filename}, filesize=#{filesize}, originFilename=#{originFilename}
 		</if>
-		<where>	
+		<where>
 			num=#{num}
 		</where>
 	</update>
 	
 </mapper>
+
+
+
+
+

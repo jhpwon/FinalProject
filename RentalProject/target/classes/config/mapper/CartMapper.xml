@@ -4,52 +4,79 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.multi.mapper.CartMapper">
-	<select id="selectCartCountByPnum" resultType="int" parameterType="Cart">
-		select cartNum from cart 
+
+	<select id="selectCartCountByPnum" resultType="int"
+		parameterType="Cart">
+		select cartNum from cart
 		where userid_fk=#{userid_fk} and pnum_fk=#{pnum_fk}
 	</select>
+
 	<insert id="addCart" parameterType="Cart">
-		<selectKey keyProperty="cartNum" order="BEFORE" resultType="_int">
+		<selectKey keyProperty="cartNum" order="BEFORE"
+			resultType="_int">
 			select cart_seq.nextval from dual
 		</selectKey>
-		insert into cart(cartNum, userid_fk, pnum_fk, pqty, indate) 
-		values(#{cartNum}, #{userid_fk}, #{pnum_fk}, #{pqty}, sysdate)
+		insert into cart(cartNum,userid_fk, pnum_fk, pqty,indate)
+		values(#{cartNum},#{userid_fk},#{pnum_fk},#{pqty}, sysdate)
 	</insert>
+
 	<update id="updateCartQty" parameterType="Cart">
-		update cart set pqty=pqty+#{pqty} 
+		update cart set
+		pqty=pqty+#{pqty}
 		where userid_fk=#{userid_fk} and pnum_fk=#{pnum_fk}
 	</update>
-	<select id="selectCartView_OLD" parameterType="string" resultType="Cart">
-		select c.*, pname, pimage1, price, saleprice, point, 
-		(c.pqty*p.saleprice) totalPrice,
-		(c.pqty*p.point) totalPoint
+
+	<!-- 특정 회원의 장바구니 목록 -->
+	<select id="selectCartView_OLD" parameterType="string"
+		resultType="Cart">
+		select c.*,pname, pimage1,price, saleprice, point
+		, (c.pqty * p.saleprice) totalPrice
+		, (c.pqty * p.point) totalPoint
 		from cart c join products p
-		on c.pnum_fk=p.pnum
+		on c.pnum_fk = p.pnum
 		and c.userid_fk=#{value}
 	</select>
-	<!-- 
-		create or replace view CARTVIEW
-		as
-		select c.*, pname, pimage1, price, saleprice, point, 
-		(c.pqty*p.saleprice) totalPrice,
-		(c.pqty*p.point) totalPoint
+	
+	<!--  위 SQL문을 이용해 장바구니 VIEW를 만든다
+		CREATE OR REPLACE VIEW CARTVIEW
+		AS
+		select c.*,pname, pimage1,price, saleprice, point
+		, (c.pqty * p.saleprice) totalPrice
+		, (c.pqty * p.point) totalPoint
 		from cart c join products p
-		on c.pnum_fk=p.pnum
+		on c.pnum_fk = p.pnum;
 	-->
-	<select id="selectCartView" parameterType="string" resultType="Cart">
-		select * from cartView where userid_fk=#{value}
+	<select id="selectCartView" parameterType="string" resultType="Cart">		
+	   select * from cartView where userid_fk=#{value}
 	</select>
+	
 	<select id="getCartTotal" parameterType="string" resultType="Cart">
-		select sum(totalPrice) cartTotalPrice, sum(totalPoint) cartTotalPoint from cartView 
-		where userid_fk=#{value}
+		select sum(totalPrice) cartTotalPrice, 
+			   sum(totalPoint) cartTotalPoint
+			   from cartView where userid_fk=#{value}
 	</select>
+	
 	<delete id="delCart" parameterType="_int">
 		delete from cart where cartNum=#{cartNum}
 	</delete>
+	
 	<delete id="delCartAll" parameterType="string">
 		delete from cart where userid_fk=#{value}
 	</delete>
+	
 	<update id="editCart" parameterType="Cart">
 		update cart set pqty=#{pqty} where cartNum=#{cartNum}
 	</update>
+
 </mapper>
+
+
+
+
+
+
+
+
+
+
+

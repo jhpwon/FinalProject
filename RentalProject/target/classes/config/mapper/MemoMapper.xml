@@ -4,23 +4,30 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.memo.model.MemoMapper">
+
 	<insert id="insertMemo" parameterType="Memo">
-		INSERT INTO memo(idx,name,msg,wdate)
-		VALUES(memo_seq.nextval,#{name},#{msg:VARCHAR},sysdate)
+		INSERT INTO
+		memo(idx,name,msg,wdate)
+		VALUES(memo_seq.nextval,#{name},#{msg:VARCHAR}, sysdate)
 	</insert>
+
+
 	<select id="getTotalCount" resultType="_int">
 		select count(idx) from
 		memo
 	</select>
+
 	<select id="listMemo" resultType="Memo" parameterType="map">
-		<!-- select idx,name,msg,wdate from memo order by idx desc -->
+		<!-- select idx, name, msg, wdate from memo order by idx desc -->
 		select * from (
 		select row_number() over(order by idx desc) rn, memo.*
 		from memo
 		) where rn between #{start} and #{end}
 	</select>
+
 	<delete id="deleteMemo" parameterType="_int">
 		delete from memo where
 		idx=#{idx}
 	</delete>
+
 </mapper>

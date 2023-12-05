@@ -215,35 +215,7 @@ commit;
 
 select * from downCategory;
 
-desc products;
 
-select * from products;
-select * from member;
-select * from cart;
 
-select p.*,
-(select upCg_name from upCategory where upCg_code=p.upCg_code) upCg_name,
-(select downCg_name from downCategory where downCg_code=p.downCg_code) downCg_name
-from products p order by pnum desc;
 
-select c.*, pname, pimage1, price, saleprice, point, 
-(c.pqty*p.saleprice) totalPrice,
-(c.pqty*p.point) totalPoint
-from cart c join products p
-on c.pnum_fk=p.pnum
-and c.userid_fk='kim';
 
-create or replace view CARTVIEW
-as
-select c.*, pname, pimage1, price, saleprice, point, 
-(c.pqty*p.saleprice) totalPrice,
-(c.pqty*p.point) totalPoint
-from cart c join products p
-on c.pnum_fk=p.pnum;
-
-select * from cartview where userid_fk='kim';
-select sum(totalprice) carttotalprice, sum(totalpoint) carttotalpoint
-from cartview
-where userid_fk='kim';
-
-alter table member modify userpwd varchar2(100);

@@ -1,28 +1,39 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
 <style>
 	.table td{
 		text-align:left;
 		padding:7px;
 	}
 </style>
-<script src="https://cdn.ckeditor.com/4.17.2/standard/ckeditor.js"></script>
+<!-- CKEditor CDN------------------------------------------------------------- -->
+<script src="https://cdn.ckeditor.com/4.17.2/standard/ckeditor.js"></script> 
+<!-- ------------------------------------------------------------------------ -->
 <div class="container">
-	<h1 class="text-center mt-4">Spring Board 답변 글쓰기</h1>
-	<br><br>
-	<!--  
+
+    <h1 class="text-center mt-4">Spring Board 답변 글쓰기</h1>
+    <br><br>
+    <!--  
     파일업로드시
     [1] method="post"
     [2] enctype="multipart/form-data"
     -->
-	<form name="boardF" action="../user/write" method="post" enctype="multipart/form-data">
-	<input type="hidden" name="mode" value="rewrite">
-	<input type="hidden" name="num" value="${vo.num}">
-		<table class="table table-bordered">
+    <form name="boardF" action="../user/write" method="post" enctype="multipart/form-data">
+    	<!-- -----hidden data--------------------------------------- -->
+    	<input type="hidden" name="mode" value="rewrite">
+    	<!--mode값:  원본 글쓰기(write), 글수정(edit), 답변글쓰기(rewrite) -->
+    	
+    	<!-- 부모글(원글)의 글번호를 hidden으로 넘기자----------------- -->
+    	<input type="hidden" name="num" value="${vo.num}">
+    	<!-- --------------------------------------------- -->
+    	<table class="table table-bordered">
 			<tr>
 				<th style="width:20%">제목</th>
 				<td style="width:80%">
-					<input type="text" name="subject" value="[RE]${vo.subject}"
+					<input type="text" name="subject"
+					 value="[RE]${vo.subject}"
+					
 					 id="subject" placeholder="Subject" class="form-control">
 				</td>
 			</tr>
@@ -65,29 +76,41 @@
 				</td>
 			</tr>
 		</table>
-	</form>
-	<script>
-		$(function(){
-			CKEDITOR.replace('content');
-		})
-		
-		function check(){
+    </form>
+
+    <script>
+    	$(function(){
+    		CKEDITOR.replace('content');
+    	})
+    	
+    
+		function check(){    		
+    		
 			if(!boardF.userid.value){
 				alert('작성자를 입력하세요');
 				boardF.userid.focus();
 				return;
 			}
 			if(CKEDITOR.instances.content.getData()==''){
-				alert('글 내용을 입력하세요');
+				alert('글내용을 입력하세요');
 				CKEDITOR.instances.content.focus();
 				return;
 			}
+			
 			if(!boardF.passwd.value){
 				alert('글 비밀번호를 입력하세요');
 				boardF.passwd.focus();
 				return;
 			}
 			boardF.submit();
-		}
-	</script>
+		}//check()------------------    
+    </script>
+    
 </div>
+
+
+
+
+
+
+    

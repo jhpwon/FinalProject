@@ -4,40 +4,54 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.multi.mapper.ProductMapper">
-	<select id="getUpcategory"
+
+	<select id="getUpCategory"
 		resultType="com.multi.model.CategoryVO">
 		select * from upCategory order by upCg_code
 	</select>
+
+
 	<insert id="productInsert"
 		parameterType="com.multi.model.ProductVO">
 		<selectKey keyProperty="pnum" order="BEFORE"
 			resultType="_int">
 			select products_seq.nextval from dual
 		</selectKey>
-		insert into products values
-		(#{pnum},#{pname},#{pimage1:VARCHAR},#{pimage2:VARCHAR},#{pimage3:VARCHAR},#{price},#{saleprice:NUMERIC},
-		#{pqty:NUMERIC},#{point:NUMERIC},#{pspec},#{pcontent:VARCHAR},#{pcompany:VARCHAR},sysdate,
-		#{upCg_code},#{downCg_code})
+		insert into products values(#{pnum},#{pname},#{pimage1:VARCHAR}
+		,#{pimage2:VARCHAR},#{pimage3:VARCHAR},#{price}
+		,#{saleprice:NUMERIC},#{pqty:NUMERIC},#{point:NUMERIC},#{pspec}
+		,#{pcontent:VARCHAR},#{pcompany:VARCHAR}, sysdate
+		,#{upCg_code},#{downCg_code})
+
 	</insert>
+
+
 	<select id="productList" resultType="com.multi.model.ProductVO">
 		<!-- select * from products order by pnum desc -->
 		select p.*,
 		(select upCg_name from upCategory where upCg_code=p.upCg_code) upCg_name,
-		(select downCg_name from downCategory where downCg_code=p.downCg_code) downCg_name
+		(select downCg_name from downCategory where downCg_code=p.downCg_code)
+		downCg_name
 		from products p order by pnum desc
 	</select>
+	
 	<select id="getProduct" resultType="Product" parameterType="_int">
 		select p.*,
 		(select upCg_name from upCategory where upCg_code=p.upCg_code) upCg_name,
-		(select downCg_name from downCategory where downCg_code=p.downCg_code) downCg_name
+		(select downCg_name from downCategory where downCg_code=p.downCg_code)
+		downCg_name
 		from products p where pnum=#{pnum}
-	</select>
+	</select>	
+	
 	<update id="productUpdate" parameterType="Product">
 		update products
 		<set>
-			pname=#{pname}, price=#{price}, saleprice=#{saleprice:NUMERIC}, pqty=#{pqty:NUMERIC}, point=#{point:NUMERIC}, 
-			pspec=#{pspec:VARCHAR}, pcontent=#{pcontent:VARCHAR}, pcompany=#{pcompany:VARCHAR}, 
-			upCg_code=#{upCg_code}, downCg_code=#{downCg_code}
+			pname=#{pname}, price=#{price}, saleprice=#{saleprice:NUMERIC}
+			,pqty=#{pqty:NUMERIC}, point=#{point:NUMERIC}
+			,pspec=#{pspec:VARCHAR}, pcontent=#{pcontent:VARCHAR}
+			,pcompany=#{pcompany:VARCHAR}
+			,upCg_code=#{upCg_code}, downCg_code=#{downCg_code}
+			
 			<if test="pimage1 !=null and pimage1 !=''">
 				, pimage1=#{pimage1}
 			</if>
@@ -49,19 +63,37 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			</if>
 		</set>
 		<where>
-			pnum=#{pnum}
+		   pnum=#{pnum}
 		</where>
 	</update>
-	<!-- pspec별 상품 목록 가져오기 -->
+	
 	<sql id="product_cols">
 		p.*,
 		(select upCg_name from upCategory where upCg_code=p.upCg_code) upCg_name,
-		(select downCg_name from downCategory where downCg_code=p.downCg_code) downCg_name
+		(select downCg_name from downCategory where downCg_code=p.downCg_code)
+		downCg_name
 	</sql>
-	<select id="selectByPspec" parameterType="string" resultType="Product"> 
+	
+	<!--pspec별 상품목록 가져오기  -->
+	<select id="selectByPspec" parameterType="string" resultType="Product">
 		select
-			<include refid="product_cols" />
+			<include refid="product_cols"/>
 		from products p
 		where pspec=#{pspec}
 	</select>
+	
+
 </mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+

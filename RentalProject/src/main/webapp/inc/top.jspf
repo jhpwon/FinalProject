@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,12 +21,15 @@
   </style>
 </head>
 <body>
-<c:set var="myctx" value="${pageContext.request.contextPath}" scope="session"/>
+<!-- 컨텍스트명 가져오기 -------------------------------------------------------------- -->
+<c:set var="myctx" value="${pageContext.request.contextPath}" scope="session" />
+<!-- ----------------------------------------------------------------------------- -->
+
 <div class="jumbotron text-center" style="margin-bottom:0">
   <h1>Multishop (${myctx})</h1>
   <p>Resize this responsive page to see the effect!</p> 
 </div>
-
+<!--Navbar 시작---------------------------------------------  -->
 <nav class="navbar navbar-expand-sm bg-dark navbar-dark">
   <a class="navbar-brand" href="${myctx}/index">Logo</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
@@ -45,34 +50,36 @@
 	        <a class="nav-link text-white" href="${myctx}/logout">${loginUser.userid}님 로그인 중...</a>
 	      </li>
 	      <li class="nav-item">
-	        <a class="nav-link" href="${myctx}/logout">logout</a>
+	        <a class="nav-link" href="${myctx}/logout">Logout</a>
 	      </li>
-      </c:if>
+      </c:if>  
       
       <li class="nav-item">
         <a class="nav-link" href="${myctx}/memoList">Memo</a>
-      </li>
+      </li> 
       <li class="nav-item">
         <a class="nav-link" href="${myctx}/user/cartList">Cart</a>
-      </li>
+      </li> 
       <li class="nav-item">
         <a class="nav-link" href="${myctx}/board/write">Board Write</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" href="${myctx}/board/list">Board List</a>
       </li>
+      <!--  -->
       <!-- Dropdown -->
-      <li class="nav-item dropdown">
-      	<a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-        	Admin
-      	</a>
-      	<div class="dropdown-menu">
+	    <li class="nav-item dropdown">
+	      <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+	        Admin
+	      </a>
+	      <div class="dropdown-menu">
 	        <a class="dropdown-item" href="${myctx}/admin/prodForm">상품등록</a>
 	        <a class="dropdown-item" href="${myctx}/admin/prodList">상품목록</a>
 	        <a class="dropdown-item" href="${myctx}/admin/category">카테고리관리</a>
-      	</div>
-      </li>
-     <!-- Dropdown End -->
+	      </div>
+	    </li>
+      <!-- Dropdown end -->
     </ul>
   </div>  
 </nav>
+<!--Navbar 끝------------------------------------------------  -->
